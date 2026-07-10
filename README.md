@@ -29,10 +29,7 @@ Controls
 ### Tests and results
 Demonstration videos are available under `test/results/`.
 
-<video src="test/results/gap_closing.mp4" width="100%" controls="controls">
-  Your browser does not support the video tag.
-</video>
-
+https://github.com/user-attachments/assets/774da42a-8f07-4b7f-bbf1-0ffa844c4da4
 
 <b>Gap closing</b>: following vehicles close the gap from long distances while the virtual leader maintains a constant speed.
 
