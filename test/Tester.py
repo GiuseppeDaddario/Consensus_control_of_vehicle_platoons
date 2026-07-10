@@ -59,7 +59,7 @@ class Tester:
 
         sim = Simulation(dt=self.dt, mode="scenario", total_time=40.0,
                          P_init=P, V_init=V, A_init=A,
-                         leader_profile=lambda t: 1.75,
+                         virtual_leader_profile=lambda t: 1.75,
                          scenario_name="Vehicle Following")
         self.run_simulation(sim, render_every=render_every)
 
@@ -100,7 +100,7 @@ class Tester:
         sim = Simulation(dt=self.dt, mode="scenario", total_time=20.0,
                          P_init=P, V_init=V, A_init=A,
                          h=h, c1=0.8, c2=0.2,
-                         leader_profile=braking_profile,
+                         virtual_leader_profile=braking_profile,
                          scenario_name="Braking (M=10)")
 
         sim.v_ref = v_start
