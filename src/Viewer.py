@@ -2,6 +2,8 @@ import pygame
 import numpy as np
 from itertools import cycle
 
+from pygame.examples.eventlist import virtual_x
+
 
 class Viewer:
     def __init__(self, width=1600, height=920, scale=10.0):
@@ -62,12 +64,12 @@ class Viewer:
     def close(self):
         pygame.quit()
 
-    def draw_scene(self, leader, vehicles, sim_time, leader_cmd, histories, title="Interactive platoon"):
-        self._update_camera(leader.p)
+    def draw_scene(self, virtual_leader, vehicles, sim_time, virtual_leader_cmd, histories, title="Interactive platoon"):
+        self._update_camera(virtual_leader.p)
         self.screen.fill((230, 230, 230))
 
         self._draw_sidebar(histories)
-        self._draw_world(leader, vehicles, sim_time, leader_cmd, title)
+        self._draw_world(virtual_leader, vehicles, sim_time, virtual_leader_cmd, title)
 
         pygame.display.flip()
 
@@ -111,7 +113,7 @@ class Viewer:
             rect = pygame.Rect(margin_x, y, plot_w, plot_h)
             self._draw_plot(rect, title, t_hist, series_hist, y_lim)
 
-    def _draw_world(self, leader, vehicles, sim_time, leader_cmd, title):
+    def _draw_world(self, virtual_leader, vehicles, sim_time, virtual_leader_cmd, title):
         world_rect = pygame.Rect(self.world_x, 0, self.world_w, self.height)
         pygame.draw.rect(self.screen, self.sky_color, world_rect)
 
@@ -123,8 +125,8 @@ class Viewer:
 
         self._draw_world_background()
         self._draw_road()
-        self._draw_vehicles(leader, vehicles)
-        self._draw_hud(leader, vehicles, sim_time, leader_cmd, title)
+        self._draw_vehicles(virtual_leader, vehicles)
+        self._draw_hud(virtual_leader, vehicles, sim_time, virtual_leader_cmd, title)
 
     def _draw_world_background(self):
         world_start, world_end = self._visible_world_bounds(margin=100.0)
@@ -184,7 +186,7 @@ class Viewer:
 
     def _draw_vehicles(self, leader, vehicles):
         all_vehicles = [leader] + vehicles
-        labels = ["Leader"] + [f"Car {v.id}" for v in vehicles]
+        labels = ["Virtual leader"] + [f"Car {v.id}" for v in vehicles]
         color_cycle = cycle(self.vehicle_colors)
         for vehicle, label, color in zip(all_vehicles, labels, color_cycle):
             self._draw_vehicle(vehicle, color, label)
@@ -218,7 +220,7 @@ class Viewer:
         pygame.draw.rect(self.screen, self.label_border, bg_rect, width=1, border_radius=6)
         self.screen.blit(label_surface, label_rect)
 
-    def _draw_hud(self, leader, vehicles, sim_time, leader_cmd, title):
+    def _draw_hud(self, virtual_leader, vehicles, sim_time, virtual_leader_cmd, title):
         panel = pygame.Rect(self.world_x + 16, 16, 360, 220)
         pygame.draw.rect(self.screen, self.label_bg, panel, border_radius=10)
         pygame.draw.rect(self.screen, (180, 180, 180), panel, width=2, border_radius=10)
@@ -226,10 +228,10 @@ class Viewer:
         lines = [
             f"{title}",
             f"time: {sim_time:.2f} s",
-            f"leader pos: {leader.p:.2f} m",
-            f"leader vel: {leader.v:.2f} m/s",
-            f"leader acc: {leader.a:.2f} m/s²",
-            f"leader cmd: {leader_cmd:.2f}",
+            f"v. leader pos: {virtual_leader.p:.2f} m",
+            f"v. leader vel: {virtual_leader.v:.2f} m/s",
+            f"v. leader acc: {virtual_leader.a:.2f} m/s²",
+            f"v. leader cmd: {virtual_leader_cmd:.2f}",
             f"followers: {len(vehicles)}",
             "controls: W accelerate | S brake",
         ]

@@ -1,22 +1,24 @@
 import pygame
+from pygame.examples.eventlist import virtual_x
+
 from src.Controller import BidirectionalController
 from src.Vehicle import Vehicle
 from src.Viewer import Viewer
 
 
-def append_histories(histories, controller, leader, vehicles, t):
+def append_histories(histories, controller, virtual_leader, vehicles, t):
     histories["t"].append(t)
 
-    histories["v"][0].append(leader.v)
-    histories["a"][0].append(leader.a)
-    histories["u"][0].append(leader.u)
+    histories["v"][0].append(virtual_leader.v)
+    histories["a"][0].append(virtual_leader.a)
+    histories["u"][0].append(virtual_leader.u)
 
     for i, veh in enumerate(vehicles):
         histories["v"][i + 1].append(veh.v)
         histories["a"][i + 1].append(veh.a)
         histories["u"][i + 1].append(veh.u)
 
-        prev_veh = leader if i == 0 else vehicles[i - 1]
+        prev_veh = virtual_leader if i == 0 else vehicles[i - 1]
         histories["d"][i].append(prev_veh.p - veh.p - veh.length)
 
         next_veh = vehicles[i + 1] if i < len(vehicles) - 1 else None
@@ -31,7 +33,7 @@ def main():
     store_every = 5
     render_every = 5
 
-    leader = Vehicle(id="Leader", start_pos=0.0, start_vel=15.0, length=5.0)
+    virtual_leader = Vehicle(id="Virtual leader", start_pos=0.0, start_vel=15.0, length=5.0)
 
     num_vehicles = 4
     controller = BidirectionalController(num_vehicles)
@@ -75,28 +77,28 @@ def main():
         if keys[pygame.K_s]:
             raw_leader_cmd -= 6.0
 
-        safe_leader_cmd = controller.apply_cbf(raw_leader_cmd, leader, None)
-        leader.step(dt, safe_u=safe_leader_cmd)
+        safe_leader_cmd = controller.apply_cbf(raw_leader_cmd, virtual_leader, None)
+        virtual_leader.step(dt, safe_u=safe_leader_cmd)
 
-        u_dots = controller.compute_nominal_commands(vehicles, leader)
+        u_dots = controller.compute_nominal_commands(vehicles, virtual_leader)
 
         for i in range(num_vehicles):
             curr_veh = vehicles[i]
-            prev_veh = leader if i == 0 else vehicles[i - 1]
+            prev_veh = virtual_leader if i == 0 else vehicles[i - 1]
 
             nominal_u = curr_veh.u + u_dots[i] * dt
             safe_u = controller.apply_cbf(nominal_u, curr_veh, prev_veh)
             curr_veh.step(dt, safe_u)
 
         if step % store_every == 0:
-            append_histories(histories, controller, leader, vehicles, sim_time)
+            append_histories(histories, controller, virtual_leader, vehicles, sim_time)
 
         if step % render_every == 0:
             viewer.draw_scene(
-                leader=leader,
+                virtual_leader=virtual_leader,
                 vehicles=vehicles,
                 sim_time=sim_time,
-                leader_cmd=safe_leader_cmd,
+                virtual_leader_cmd=safe_leader_cmd,
                 histories=histories
             )
             viewer.tick(60)

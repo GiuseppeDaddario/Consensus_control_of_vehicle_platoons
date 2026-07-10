@@ -23,10 +23,10 @@ class Tester:
 
                 # draw
                 viewer.draw_scene(
-                    leader=sim.leader,
+                    virtual_leader=sim.virtual_leader,
                     vehicles=sim.vehicles,
                     sim_time=sim.t,
-                    leader_cmd=sim.last_leader_cmd,
+                    virtual_leader_cmd=sim.last_virtual_leader_cmd,
                     histories=sim.log,
                     title=sim.title
                 )
@@ -113,7 +113,7 @@ class Tester:
 
 if __name__ == "__main__":
     tester = Tester(dt=0.001)
-    #tester.test_gap_closing(render_every=25)
+    tester.test_gap_closing(render_every=25)
     #tester.test_collision_avoidance(render_every=20)
     #tester.test_vehicle_following(render_every=30)
     #tester.test_platoon_forming(render_every=30)
