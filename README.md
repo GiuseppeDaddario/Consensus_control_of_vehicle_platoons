@@ -12,7 +12,6 @@ Implementation of consensus-based and safety-critical control algorithms for veh
 - `src/Viewer.py`: rendering and user interaction (pygame).
 - `src/Simulation.py`: auxiliary simulation utilities (if present).
 - `test/Tester.py` and `test/results/`: example scenarios and recorded outputs.
-- `reference_paper.pdf`: supporting literature.
 
 ---
 
@@ -43,7 +42,7 @@ Other scenarios available:
 
 ---
 ### References
-[[1]](reference_paper.pdf) Ramzi Gaagai, Joachim Horn,
+[[1]](https://www.sciencedirect.com/science/article/abs/pii/S0967066123002599) Ramzi Gaagai, Joachim Horn,
 <b> Constrained distributed consensus control of homogeneous vehicle platoons with bidirectional communication </b>,
 Control Engineering Practice,
 Volume 140,
