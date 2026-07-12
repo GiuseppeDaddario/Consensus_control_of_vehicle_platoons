@@ -77,17 +77,16 @@ def main():
         if keys[pygame.K_s]:
             raw_leader_cmd -= 6.0
 
-        safe_leader_cmd = controller.apply_cbf(raw_leader_cmd, virtual_leader, None)
+        safe_leader_cmd = controller.apply_cbf(raw_leader_cmd, virtual_leader)
         virtual_leader.step(dt, safe_u=safe_leader_cmd)
 
         u_dots = controller.compute_nominal_commands(vehicles, virtual_leader)
 
         for i in range(num_vehicles):
             curr_veh = vehicles[i]
-            prev_veh = virtual_leader if i == 0 else vehicles[i - 1]
 
             nominal_u = curr_veh.u + u_dots[i] * dt
-            safe_u = controller.apply_cbf(nominal_u, curr_veh, prev_veh)
+            safe_u = controller.apply_cbf(nominal_u, curr_veh)
             curr_veh.step(dt, safe_u)
 
         if step % store_every == 0:

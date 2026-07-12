@@ -60,6 +60,7 @@ class Tester:
         sim = Simulation(dt=self.dt, mode="scenario", total_time=40.0,
                          P_init=P, V_init=V, A_init=A,
                          virtual_leader_profile=lambda t: 1.75,
+                         virtual_leader_max_v = 25.0,
                          scenario_name="Vehicle Following")
         self.run_simulation(sim, render_every=render_every)
 
@@ -113,8 +114,8 @@ class Tester:
 
 if __name__ == "__main__":
     tester = Tester(dt=0.001)
-    tester.test_gap_closing(render_every=25)
+    #tester.test_gap_closing(render_every=25)
     #tester.test_collision_avoidance(render_every=20)
-    #tester.test_vehicle_following(render_every=30)
+    tester.test_vehicle_following(render_every=30)
     #tester.test_platoon_forming(render_every=30)
     #tester.test_braking_m10(render_every=20)

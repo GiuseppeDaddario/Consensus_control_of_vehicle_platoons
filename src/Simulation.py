@@ -5,12 +5,13 @@ from src.Vehicle import Vehicle
 
 
 class Simulation:
-    def __init__(self, dt=0.01, mode="interactive", total_time=60.0, P_init=None, V_init=None, A_init=None, h=1.0, c1=0.8, c2=0.2, virtual_leader_profile=None, scenario_name=None):
+    def __init__(self, dt=0.01, mode="interactive", total_time=60.0, P_init=None, V_init=None, A_init=None, h=1.0, c1=0.8, c2=0.2, virtual_leader_profile=None, virtual_leader_max_v=40.0, scenario_name=None):
         self.dt = dt
         self.title = "Manual mode" if scenario_name is None else scenario_name
         self.mode = mode
         self.total_time = total_time
         self.virtual_leader_profile = virtual_leader_profile
+        self.virtual_leader_max_v = virtual_leader_max_v
 
         if P_init is None:
             P_init = [0.0, -20.0, -40.0, -60.0, -80.0]
@@ -63,7 +64,10 @@ class Simulation:
         if self.virtual_leader_profile is None:
             self.a_ref = 0.0
         else:
-            self.a_ref = self.virtual_leader_profile(self.t)
+            if self.v_ref < self.virtual_leader_max_v:
+                self.a_ref = self.virtual_leader_profile(self.t)
+            else:
+                self.a_ref = 0.0
 
         self.v_ref += self.a_ref * self.dt
         self.p_ref += self.v_ref * self.dt
@@ -77,17 +81,16 @@ class Simulation:
         else:
             nominal_leader_u = self._scenario_command()
 
-        safe_virtual_leader_cmd = self.controller.apply_cbf(nominal_leader_u, self.virtual_leader, None)
+        safe_virtual_leader_cmd = self.controller.apply_cbf(nominal_leader_u, self.virtual_leader)
         self.virtual_leader.step(self.dt, safe_u=safe_virtual_leader_cmd)
 
         u_dots = self.controller.compute_nominal_commands(self.vehicles, self.virtual_leader)
 
         for i in range(self.num_vehicles):
             curr_veh = self.vehicles[i]
-            prev_veh = self.virtual_leader if i == 0 else self.vehicles[i - 1]
 
             nominal_u = curr_veh.u + u_dots[i] * self.dt
-            safe_u = self.controller.apply_cbf(nominal_u, curr_veh, prev_veh)
+            safe_u = self.controller.apply_cbf(nominal_u, curr_veh)
             curr_veh.step(self.dt, safe_u)
 
         self.last_virtual_leader_cmd = safe_virtual_leader_cmd

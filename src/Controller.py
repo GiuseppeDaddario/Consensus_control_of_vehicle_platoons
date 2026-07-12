@@ -111,7 +111,7 @@ class BidirectionalController:
 
         return u_dots
 
-    def apply_cbf(self, nominal_u, curr_veh, prev_veh):
+    def apply_cbf(self, nominal_u, curr_veh):
         v = curr_veh.v
         a = curr_veh.a
         tau = curr_veh.tau
